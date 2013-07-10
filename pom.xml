@@ -319,6 +319,19 @@ Individual Maven projects may choose to override these defaults. -->
             </modules>
         </profile>
 
+        <!--
+           Builds REST WAR for DSpace
+        -->
+        <profile>
+            <id>dspace-rest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>dspace-rest</module>
+            </modules>
+        </profile>
+
 
       <!--
           The 'release' profile is used by the 'maven-release-plugin' (see above)
@@ -340,6 +353,7 @@ Individual Maven projects may choose to override these defaults. -->
             <module>dspace-sword</module>
             <module>dspace-swordv2</module>
             <module>dspace-sword-client</module>
+            <module>dspace-rest</module>
          </modules>
       </profile>
 
@@ -414,6 +428,12 @@ Individual Maven projects may choose to override these defaults. -->
             <groupId>org.dspace</groupId>
             <artifactId>dspace-api</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.dspace</groupId>
+            <artifactId>dspace-rest</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
          </dependency>
           <dependency>
               <groupId>org.dspace</groupId>
