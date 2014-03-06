@@ -87,6 +87,7 @@
          <groupId>org.dspace</groupId>
          <artifactId>dspace-rest</artifactId>
           <type>war</type>
+          <version>3.2</version>
       </dependency>
 
        <dependency>
@@ -94,6 +95,7 @@
            <artifactId>dspace-rest</artifactId>
            <type>jar</type>
            <classifier>classes</classifier>
+           <version>3.2</version>
        </dependency>
 
        <dependency>

@@ -42,6 +42,7 @@ public class DS16DirectServlet extends DirectServlet {
         this.entityProviders.add(new BitstreamProvider(entityProviderManager));
         this.entityProviders.add(new CommunitiesProvider(entityProviderManager));
         this.entityProviders.add(new CollectionsProvider(entityProviderManager));
+        this.entityProviders.add(new DiscoverProvider(entityProviderManager));
         this.entityProviders.add(new ItemsProvider(entityProviderManager));
         this.entityProviders.add(new StatsProvider(entityProviderManager));
         this.entityProviders.add(new UserProvider(entityProviderManager));
@@ -49,6 +50,7 @@ public class DS16DirectServlet extends DirectServlet {
         this.entityProviders.add(new HarvestProvider(entityProviderManager));
         this.entityProviders.add(new GroupProvider(entityProviderManager));
         this.entityProviders.add(new WorkflowProvider(entityProviderManager));
+        this.entityProviders.add(new StatisticsProvider(entityProviderManager));
         this.entityProviders.add(new SubmissionProvider(entityProviderManager));
     }
 
