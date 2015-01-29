@@ -3,10 +3,9 @@
     <groupId>org.dspace.modules</groupId>
     <artifactId>rest</artifactId>
     <packaging>war</packaging>
-    <name>DSpace REST :: Local Customizations</name>
+    <name>DSpace REST :: Web Application</name>
     <description>
-        This project allows you to overlay your own local REST customizations
-        on top of the default REST API provided with DSpace.
+      	DSpace REST API Web Application
     </description>
 
     <parent>
@@ -42,6 +41,7 @@
                         </resource>
                     </webResources>
                     <overlays>
+		    	<overlay />
                         <!--
                            the priority of overlays is determined here
                            1.) default: anything in the current project has highest
@@ -52,6 +52,7 @@
                         <overlay>
                             <groupId>org.dspace</groupId>
                             <artifactId>dspace-rest</artifactId>
+                        <type>war</type>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -85,10 +86,10 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.dspace.modules</groupId>
-            <artifactId>additions</artifactId>
-        </dependency>
+       <!--<dependency>-->
+           <!--<groupId>org.dspace.modules</groupId>-->
+           <!--<artifactId>additions</artifactId>-->
+       <!--</dependency>-->
 
         <!-- DSpace REST Webapp -->
         <dependency>

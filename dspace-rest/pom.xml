@@ -3,10 +3,8 @@
     <groupId>org.dspace</groupId>
     <artifactId>dspace-rest</artifactId>
     <packaging>war</packaging>
-    <version>5.0</version>
-    <name>DSpace REST :: API and Implementation</name>
-    <description>DSpace RESTful Web Services API</description>
-    <url>http://demo.dspace.org</url>
+    <name>DSpace REST :: API</name>
+    <description>The REST API for DSpace using the Sakai EntityBus</description>
 
     <parent>
         <groupId>org.dspace</groupId>
@@ -19,119 +17,124 @@
         <!-- This is the path to the root [dspace-src] directory. -->
         <root.basedir>${basedir}/..</root.basedir>
     </properties>
+
     <build>
+        <filters>
+            <!-- Filter using the properties file defined by dspace-parent POM -->
+            <filter>${filters.file}</filter>
+        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <attachClasses>true</attachClasses>
+                    <!-- In version 2.1-alpha-1, this was incorrectly named warSourceExcludes -->
+                    <!--<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                    <warSourceExcludes>WEB-INF/lib/*.jar</warSourceExcludes>-->
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>${basedir}/src/main/webapp</directory>
+                            <includes>
+                                <include>WEB-INF/web.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
-    <dependencies>
-        <!-- Jersey, for RESTful web services -->
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>1.17.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-servlet</artifactId>
-            <version>1.17.1</version>
-        </dependency>
-        <!-- JSON serialization, should I use jackson?-->
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>1.17.1</version>
-        </dependency>
-                
-        <!-- Spring 3 dependencies -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
- 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
- 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-		
-        <!-- Jersey + Spring -->
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-spring</artifactId>
-            <version>1.8</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-beans</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <repositories>
+        <repository>
+            <id>sakaiproject repository</id>
+            <name>sakai rep</name>
+            <url>http://source.sakaiproject.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 
-        <!-- Use DSpace, for now, an older version to minimize spring generated dependency on Discovery -->
+    <profiles>
+        <profile>
+            <id>oracle-support</id>
+            <activation>
+                <property>
+                    <name>db.name</name>
+                    <value>oracle</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc6</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+	<profile>
+            <id>postgres-support</id>
+            <activation>
+                <property>
+                    <name>!db.name</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <dependencies>
         <dependency>
             <groupId>org.dspace</groupId>
             <artifactId>dspace-api</artifactId>
         </dependency>
-
-        <!-- Connecting to DSpace datasource sets a dependency on Postgres DB-->
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.atteo</groupId>
-            <artifactId>evo-inflector</artifactId>
-            <version>1.0.1</version>
+            <groupId>org.sakaiproject.entitybus</groupId>
+            <artifactId>entitybus-api</artifactId>
+            <!--<scope>compile</scope>-->
+            <version>1.0.8</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.sakaiproject.entitybus</groupId>
+            <artifactId>entitybus-impl</artifactId>
+            <!--<scope>compile</scope>-->
+            <version>1.0.8</version>
         </dependency>
         <dependency>
-            <groupId>org.dspace</groupId>
-            <artifactId>dspace-services</artifactId>
+            <groupId>org.sakaiproject.entitybus</groupId>
+            <artifactId>entitybus-rest</artifactId>
+            <!--<scope>compile</scope>-->
+            <version>1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.entitybus</groupId>
+            <artifactId>entitybus-utils</artifactId>
+            <!--<scope>compile</scope>-->
+            <version>1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sakaiproject.entitybus</groupId>
+            <artifactId>entitybus-api</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.azeckoski</groupId>
+            <artifactId>reflectutils</artifactId>
+            <version>0.9.11</version>
         </dependency>
     </dependencies>
 </project>

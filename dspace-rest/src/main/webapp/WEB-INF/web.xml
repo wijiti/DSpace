@@ -13,45 +13,27 @@
          xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
+    <!-- rest servlet -->
     <servlet>
-        <servlet-name>DSpace REST API</servlet-name>
-        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-        <init-param>
-            <!--
-             The jersey ServletContainer will look for our Root Resource Class
-             (i.e. our HelloWorld class) in the foo.bar package
-             There are other ways to register this; see the jersey documentation for
-             more details
-            -->
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.dspace.rest</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <!--
-        Load the ServletContainer at startup.  A value of 1 indicates the ServletContainer
-        is a high priority servlet to load
-         -->
+        <servlet-name>dspace.rest</servlet-name>
+        <servlet-class>org.dspace.rest.servlet.DS16DirectServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>DS16DirectServlet</servlet-name>
+        <servlet-class>org.dspace.rest.servlet.DS16DirectServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
-        <servlet-name>DSpace REST API</servlet-name>
+        <servlet-name>dspace.rest</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    
-    <!-- Security settings and mapping -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>DSpace REST API</web-resource-name>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+
+    <servlet-mapping>
+        <servlet-name>DS16DirectServlet</servlet-name>
+        <url-pattern>/DS16DirectServlet</url-pattern>
+    </servlet-mapping>
+
     
     <!-- DSpace Configuration Information -->
     <context-param>
@@ -69,19 +51,10 @@
     </context-param>
 
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            /WEB-INF/applicationContext.xml
-        </param-value>
-        <!--
-            Add this context if using Spring Security
-            /WEB-INF/applicationContext-security.xml
-        -->
+    	<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+    	<param-value>Messages</param-value>
     </context-param>
 
-    <listener>
-        <listener-class>org.dspace.app.util.DSpaceContextListener</listener-class>
-    </listener>
 
     <!-- kernel start listener (from impl)
         The following listener can be used instead of the filter below, it is simpler, cleaner
@@ -92,10 +65,5 @@
         <listener-class>org.dspace.servicemanager.servlet.DSpaceKernelServletContextListener</listener-class>
     </listener>
     
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
 
 </web-app>
