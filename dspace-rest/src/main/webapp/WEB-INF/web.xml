@@ -8,68 +8,94 @@
     http://www.dspace.org/license/
 
 -->
-<web-app id="WebApp_9" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-
-    <display-name>dspace-rest</display-name>
-    <description>DSpace REST Webapp</description>
-
-    <!-- kernel start listener (from impl), starts up the kernel for standalong webapps -->
-
-    <listener>
-        <listener-class>org.dspace.servicemanager.servlet.DSpaceKernelServletContextListener</listener-class>
-    </listener>
-
-    <!-- session/request filter (from util), handles setting up requests and sessions correctly -->
-<!--
-    <filter>
-        <filter-name>dspace.request</filter-name>
-        <filter-class>org.dspace.utils.servlet.DSpaceWebappServletFilter</filter-class>
-    </filter>
--->
-
-
-
-
-  <!-- Configuration Information -->
-
-  <context-param>
-    <param-name>dspace-config</param-name>
-    <param-value>${dspace.dir}/config/dspace.cfg</param-value>
-    <!-- <param-value>/dspace/config/dspace.cfg</param-value> -->
-  </context-param>
-
-  <!-- new ConfigurationService initialization for dspace.dir -->
-  <context-param>
-      <description>
-          The location of the main DSpace configuration file
-      </description>
-      <param-name>dspace.dir</param-name>
-      <param-value>${dspace.dir}</param-value>
-  </context-param>
-
-  <context-param>
-    <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    <param-value>Messages</param-value>
-  </context-param>
-
-    <!-- rest servlet -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="WebApp_ID" version="2.5">
     <servlet>
-        <servlet-name>dspace.rest</servlet-name>
-        <servlet-class>org.dspace.rest.servlet.DS16DirectServlet</servlet-class>
+        <servlet-name>DSpace REST API</servlet-name>
+        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+        <init-param>
+            <!--
+             The jersey ServletContainer will look for our Root Resource Class
+             (i.e. our HelloWorld class) in the foo.bar package
+             There are other ways to register this; see the jersey documentation for
+             more details
+            -->
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.dspace.rest</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!--
+        Load the ServletContainer at startup.  A value of 1 indicates the ServletContainer
+        is a high priority servlet to load
+         -->
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>DS16DirectServlet</servlet-name>
-        <servlet-class>org.dspace.rest.servlet.DS16DirectServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
-        <servlet-name>dspace.rest</servlet-name>
+        <servlet-name>DSpace REST API</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    
+    <!-- Security settings and mapping -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>DSpace REST API</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    
+    <!-- DSpace Configuration Information -->
+    <context-param>
+        <param-name>dspace-config</param-name>
+        <param-value>${dspace.dir}/config/dspace.cfg</param-value>
+    </context-param>
 
-    <servlet-mapping>
-        <servlet-name>DS16DirectServlet</servlet-name>
-        <url-pattern>/DS16DirectServlet</url-pattern>
-    </servlet-mapping>
-    </web-app>
+    <!-- new ConfigurationService initialization for dspace.dir -->
+    <context-param>
+        <description>
+            The location of the main DSpace configuration file
+        </description>
+        <param-name>dspace.dir</param-name>
+        <param-value>${dspace.dir}</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/applicationContext.xml
+        </param-value>
+        <!--
+            Add this context if using Spring Security
+            /WEB-INF/applicationContext-security.xml
+        -->
+    </context-param>
+
+    <listener>
+        <listener-class>org.dspace.app.util.DSpaceContextListener</listener-class>
+    </listener>
+
+    <!-- kernel start listener (from impl)
+        The following listener can be used instead of the filter below, it is simpler, cleaner
+        and eliminates the need for a DSpaceKernelServletFilter filter to be involved with the
+        request cycle.
+    -->
+    <listener>
+        <listener-class>org.dspace.servicemanager.servlet.DSpaceKernelServletContextListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+</web-app>

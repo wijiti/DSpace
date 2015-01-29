@@ -25,7 +25,7 @@ import org.dspace.authorize.AuthorizeManager;
 import org.dspace.content.Bitstream;
 import org.dspace.content.Bundle;
 import org.dspace.content.Collection;
-import org.dspace.content.DCValue;
+import org.dspace.content.Metadatum;
 import org.dspace.content.Item;
 import org.dspace.content.crosswalk.CrosswalkException;
 import org.dspace.content.packager.PackageDisseminator;
@@ -303,7 +303,7 @@ class DAVItem extends DAVDSpaceObject
         else if (elementsEqualIsh(property, displaynameProperty))
         {
             // displayname - title or handle.
-            DCValue titleDc[] = this.item.getDC("title", Item.ANY, Item.ANY);
+            Metadatum titleDc[] = this.item.getDC("title", Item.ANY, Item.ANY);
             value = titleDc.length > 0 ? titleDc[0].value : this.item.getHandle();
         }
         else if (elementsEqualIsh(property, handleProperty))
@@ -467,7 +467,8 @@ class DAVItem extends DAVDSpaceObject
             try
             {
                 // Create a temporary file to disseminate into
-                String tempDirectory = ConfigurationManager.getProperty("upload.temp.dir");
+                String tempDirectory = (ConfigurationManager.getProperty("upload.temp.dir") != null)
+                    ? ConfigurationManager.getProperty("upload.temp.dir") : System.getProperty("java.io.tmpdir"); 
                 File tempFile = File.createTempFile("DAVItemGet" + this.item.hashCode(), null, new File(tempDirectory));
                 tempFile.deleteOnExit();
 

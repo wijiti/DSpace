@@ -9,6 +9,7 @@ package org.dspace.browse;
 
 import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
+import org.dspace.storage.rdbms.DatabaseManager;
 
 /**
  * Factory class to generate DAOs based on the configuration
@@ -32,20 +33,8 @@ public class BrowseDAOFactory
 	    String className = ConfigurationManager.getProperty("browseDAO.class");
         if (className == null)
         {
-            // For compatibility with previous versions
-            String db = ConfigurationManager.getProperty("db.name");
-            if ("postgres".equals(db))
-            {
-                return new BrowseDAOPostgres(context);
-            }
-            else if ("oracle".equals(db))
-            {
-                return new BrowseDAOOracle(context);
-            }
-            else
-            {
-                throw new BrowseException("The configuration for db.name is either invalid, or contains an unrecognised database");
-            }    
+            // SOLR implementation is the default since DSpace 4.0        	
+            return new SolrBrowseDAO(context);
         }
         try
         {
@@ -73,20 +62,8 @@ public class BrowseDAOFactory
 	    String className = ConfigurationManager.getProperty("browseCreateDAO.class");
         if (className == null)
         {
-            // For compatibility with previous versions
-            String db = ConfigurationManager.getProperty("db.name");
-            if ("postgres".equals(db))
-            {
-                return new BrowseCreateDAOPostgres(context);
-            }
-            else if ("oracle".equals(db))
-            {
-                return new BrowseCreateDAOOracle(context);
-            }
-            else
-            {
-                throw new BrowseException("The configuration for db.name is either invalid, or contains an unrecognised database");
-            }
+            // SOLR implementation is the default since DSpace 4.0
+			return new SolrBrowseCreateDAO(context);
         }
         try
         {
@@ -111,18 +88,13 @@ public class BrowseDAOFactory
     public static BrowseItemDAO getItemInstance(Context context)
         throws BrowseException
     {
-        String db = ConfigurationManager.getProperty("db.name");
-        if ("postgres".equals(db))
+        if (! DatabaseManager.isOracle())
         {
             return new BrowseItemDAOPostgres(context);
         }
-        else if ("oracle".equals(db))
-        {
-            return new BrowseItemDAOOracle(context);
-        }
         else
         {
-            throw new BrowseException("The configuration for db.name is either invalid, or contains an unrecognised database");
+            return new BrowseItemDAOOracle(context);
         }
     }
 
@@ -137,18 +109,13 @@ public class BrowseDAOFactory
 	public static BrowseDAOUtils getUtils(Context context)
 		throws BrowseException
 	{
-		String db = ConfigurationManager.getProperty("db.name");
-		if ("postgres".equals(db))
+		if (! DatabaseManager.isOracle())
 		{
 			return new BrowseDAOUtilsPostgres();
 		}
-		else if ("oracle".equals(db))
-		{
-            return new BrowseDAOUtilsOracle();
-		}
 		else
 		{
-			throw new BrowseException("The configuration for db.name is either invalid, or contains an unrecognised database");
+            return new BrowseDAOUtilsOracle();
 		}
 	}
 }

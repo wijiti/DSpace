@@ -69,14 +69,16 @@
     <filter-name>registered-only</filter-name>
     <filter-class>org.dspace.app.webui.filter.RegisteredOnlyFilter</filter-class>
   </filter>
+  
+  <filter>
+      <filter-name>rdf-content-negotiation</filter-name>
+      <filter-class>org.dspace.rdf.negotiation.NegotiationFilter</filter-class>
+  </filter>
 
   <!-- Filter mappings -->
   <filter-mapping>
         <filter-name>dspace.request</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
   </filter-mapping>
     
   <filter-mapping>
@@ -119,6 +121,10 @@
     <url-pattern>/view-workspaceitem</url-pattern>
   </filter-mapping>
 
+  <filter-mapping>
+      <filter-name>rdf-content-negotiation</filter-name>
+      <url-pattern>/handle/*</url-pattern>
+  </filter-mapping>
  
 
   <!-- kernel start listener (from impl), starts up the kernel for standalong webapps -->
@@ -233,6 +239,11 @@
   </servlet>
   
   <servlet>
+    <servlet-name>curate</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.admin.CurateServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
     <servlet-name>feed</servlet-name>
     <servlet-class>org.dspace.app.webui.servlet.FeedServlet</servlet-class>
   </servlet>
@@ -295,6 +306,11 @@
     <servlet-class>org.dspace.app.webui.servlet.MetadataImportServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>batchimport</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.BatchImportServlet</servlet-class>
+  </servlet>
+  
   <servlet>
     <servlet-name>metadata-field-registry</servlet-name>
     <servlet-class>org.dspace.app.webui.servlet.admin.MetadataFieldRegistryServlet</servlet-class>
@@ -429,6 +445,11 @@
   </servlet>
 
   <servlet>
+    <servlet-name>sherpapolicy</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.SHERPAPublisherPolicyServlet</servlet-class>
+  </servlet>  
+
+  <servlet>
       <servlet-name>SearchResultLogServlet</servlet-name>
       <servlet-class>org.dspace.app.webui.servlet.SearchResultLogServlet</servlet-class>
   </servlet>
@@ -443,13 +464,32 @@
   	<servlet-name>json</servlet-name>
   	<servlet-class>org.dspace.app.webui.servlet.JSONServlet</servlet-class>
   </servlet>
-	
+
+  <servlet>
+  	<servlet-name>privateitems</servlet-name>
+  	<servlet-class>org.dspace.app.webui.servlet.admin.PrivateItemsServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>version-item</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.VersionItemServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>version-history</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.VersionHistoryServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>request-item</servlet-name>
+    <servlet-class>org.dspace.app.webui.servlet.RequestItemServlet</servlet-class>
+  </servlet>
+    	
   <servlet-mapping>
     <servlet-name>shibboleth-login</servlet-name>
     <url-pattern>/shibboleth-login</url-pattern>
   </servlet-mapping>
  
-
   <!-- Servlet Mappings -->
 
   <servlet-mapping>
@@ -532,6 +572,16 @@
     <url-pattern>/tools/group-select-list</url-pattern>
   </servlet-mapping>
   
+  <servlet-mapping>
+    <servlet-name>curate</servlet-name>
+    <url-pattern>/dspace-admin/curate</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>curate</servlet-name>
+    <url-pattern>/tools/curate</url-pattern>
+  </servlet-mapping>
+  
  <servlet-mapping>
     <servlet-name>itemmap</servlet-name>
     <url-pattern>/tools/itemmap</url-pattern>
@@ -597,6 +647,11 @@
     <url-pattern>/dspace-admin/metadataimport</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>batchimport</servlet-name>
+    <url-pattern>/dspace-admin/batchimport</url-pattern>
+  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>metadata-field-registry</servlet-name>
     <url-pattern>/dspace-admin/metadata-field-registry</url-pattern>
@@ -721,7 +776,12 @@
       <servlet-name>AuthorityChooseServlet</servlet-name>
       <url-pattern>/choices/*</url-pattern>
   </servlet-mapping>
-  
+
+  <servlet-mapping>
+    <servlet-name>sherpapolicy</servlet-name>
+    <url-pattern>/tools/sherpaPolicy</url-pattern>
+  </servlet-mapping>
+    
   <servlet-mapping>
   	<servlet-name>json</servlet-name>
   	<url-pattern>/json/*</url-pattern>
@@ -732,6 +792,26 @@
       <url-pattern>/dso-display</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>privateitems</servlet-name>
+    <url-pattern>/dspace-admin/privateitems</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>version-item</servlet-name>
+    <url-pattern>/tools/version</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>version-history</servlet-name>
+    <url-pattern>/tools/history</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>request-item</servlet-name>
+    <url-pattern>/request-item</url-pattern>
+  </servlet-mapping>
+  
   <!-- Icon MIME type -->
   <mime-mapping>
     <extension>ico</extension>

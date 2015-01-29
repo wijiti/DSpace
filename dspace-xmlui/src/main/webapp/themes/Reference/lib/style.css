@@ -1235,11 +1235,6 @@ input.ds-authority-lock.is-locked
 input.ds-authority-lock.is-unlocked
   { background-image: url(../images/unlock24.png); }
 
-
-/* Example of authority display: this makes authors with an authority
-   value show up as red in the item summary view: */
-span.ds-dc_contributor_author-authority { color: #982521; }
-
 /* Prevent display of COinS span - nonspacing break in span to fix closing tag
 also causes a newline in some browsers */
 span.Z3988 {
@@ -1265,6 +1260,10 @@ form.discover-sort-box select{
 .hidden {
     display:none;
     visibility:hidden;
+}
+
+.pre {
+    white-space:pre;
 }
 
 .icon-button{
@@ -1455,3 +1454,71 @@ div.vocabulary-container li.error{
     color: #c22121;
 }
 /* Controlled vocabulary support css END*/
+
+.didYouMean{
+    font-size: 18px;
+}
+
+.didYouMean a{
+    font-weight: bold;
+}
+
+
+/*Sherpa Colour Styles*/
+.sherpaList{
+    list-style-type: none;
+    margin-left: 0;
+    margin-bottom: 20px;
+}
+
+.sherpaLogo{
+    float:left;
+    margin-right:10px;
+    width: 100px;
+    height: 54px;
+}
+
+.sherpaBold{
+    font-weight:bold;
+    float:left;
+    margin-right: 3px;
+}
+
+.green{
+    background-color: #008000;
+    color: #ffffff;
+}
+
+.white{
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.yellow{
+    background-color: #ffff00;
+    color: #000000;
+}
+
+.blue{
+    background-color: #0000ff;
+    color: #ffffff;
+}
+
+.sherpaMoreInfo{
+    font-size: 75%;
+}
+
+.sherpaStyle {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    float:left;
+    border: 1px solid #cccccc;
+    margin-right: 3px;
+}

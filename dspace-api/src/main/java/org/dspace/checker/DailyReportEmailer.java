@@ -10,23 +10,10 @@ package org.dspace.checker;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Properties;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -36,6 +23,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.log4j.Logger;
 import org.dspace.core.ConfigurationManager;
+import org.dspace.core.Context;
 import org.dspace.core.Email;
 
 /**
@@ -79,12 +67,16 @@ public class DailyReportEmailer
     public void sendReport(File attachment, int numberOfBitstreams) 
             throws IOException, javax.mail.MessagingException 
     { 
-        Email email = new Email(); 
-        email.setSubject("Checksum checker Report - " + numberOfBitstreams + " Bitstreams found with POSSIBLE issues"); 
-        email.setContent("report is attached ..."); 
-        email.addAttachment(attachment, "checksum_checker_report.txt"); 
-        email.addRecipient(ConfigurationManager.getProperty("mail.admin")); 
-        email.send(); 
+        if(numberOfBitstreams > 0)
+        {
+            String hostname = ConfigurationManager.getProperty("dspace.hostname");
+            Email email = new Email();
+            email.setSubject("Checksum checker Report - " + numberOfBitstreams + " Bitstreams found with POSSIBLE issues on " + hostname);
+            email.setContent("report is attached ...");
+            email.addAttachment(attachment, "checksum_checker_report.txt");
+            email.addRecipient(ConfigurationManager.getProperty("mail.admin"));
+            email.send();
+        }
     } 
 
     /**
@@ -188,9 +180,11 @@ public class DailyReportEmailer
 
         File report = null;
         FileWriter writer = null;
+        Context context = null;
 
         try
         {
+            context = new Context();
             // the number of bitstreams in report
             int numBitstreams = 0;
 
@@ -231,7 +225,7 @@ public class DailyReportEmailer
                         tomorrow, writer);
                 writer
                         .write("\n--------------------------------- Report Spacer ---------------------------\n\n");
-                numBitstreams += reporter.getUncheckedBitstreamsReport(writer);
+                numBitstreams += reporter.getUncheckedBitstreamsReport(context, writer);
                 writer
                         .write("\n--------------------------------- End Report ---------------------------\n\n");
                 writer.flush();
@@ -289,7 +283,7 @@ public class DailyReportEmailer
                     writer
                             .write("\n--------------------------------- Begin Reporting ------------------------\n\n");
                     numBitstreams += reporter
-                            .getUncheckedBitstreamsReport(writer);
+                            .getUncheckedBitstreamsReport(context, writer);
                     writer.flush();
                     writer.close();
                     emailer.sendReport(report, numBitstreams);
@@ -303,9 +297,14 @@ public class DailyReportEmailer
         catch (IOException e)
         {
             log.fatal(e);
-        }
-        finally
+        } catch (SQLException e) {
+            log.fatal(e);
+        } finally
         {
+            if(context != null && context.isValid())
+            {
+                context.abort();
+            }
             if (writer != null)
             {
                 try
