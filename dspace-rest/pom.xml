@@ -3,7 +3,6 @@
     <groupId>org.dspace</groupId>
     <artifactId>dspace-rest</artifactId>
     <packaging>war</packaging>
-    <version>5.3</version>
     <name>DSpace REST :: API</name>
     <description>The REST API for DSpace using the Sakai EntityBus</description>
 
